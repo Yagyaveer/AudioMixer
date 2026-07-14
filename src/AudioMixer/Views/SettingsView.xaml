@@ -1,0 +1,114 @@
+<UserControl x:Class="AudioMixer.Views.SettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:views="clr-namespace:AudioMixer.Views">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <views:InverseBoolToVisibilityConverter x:Key="InvBoolToVis"/>
+        <views:StringToBrushConverter x:Key="StringToBrush"/>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <TextBlock Text="Settings" Style="{StaticResource H1}" Margin="0,0,0,16"/>
+
+            <!-- Appearance -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+                <StackPanel>
+                    <TextBlock Text="Accent color" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                    <ItemsControl ItemsSource="{Binding AccentPresets}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Width="30" Height="30" Margin="0,0,10,0" Cursor="Hand"
+                                        Command="{Binding DataContext.SetAccentCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Ellipse Fill="{TemplateBinding Background}" Stroke="#40FFFFFF" StrokeThickness="1"/>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                    <Button.Background>
+                                        <Binding Converter="{StaticResource StringToBrush}"/>
+                                    </Button.Background>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Border>
+
+            <!-- Audio -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+                <StackPanel>
+                    <TextBlock Text="Audio" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="140"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="Buffer size (latency)"/>
+                            <TextBlock Style="{StaticResource Sub}" Text="Lower = snappier, higher = safer against crackles. Applies to routes created or changed afterwards."/>
+                        </StackPanel>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding LatencyOptions}" SelectedItem="{Binding LatencyMs}" VerticalAlignment="Center"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- Behavior -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+                <StackPanel>
+                    <TextBlock Text="Behavior" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                    <Grid Margin="0,0,0,10">
+                        <StackPanel>
+                            <TextBlock Text="Run at startup"/>
+                            <TextBlock Style="{StaticResource Sub}" Text="Start with Windows so your routes are always live."/>
+                        </StackPanel>
+                        <ToggleButton Style="{StaticResource Switch}" HorizontalAlignment="Right" VerticalAlignment="Center" IsChecked="{Binding RunAtStartup}"/>
+                    </Grid>
+                    <Grid Margin="0,0,0,10">
+                        <StackPanel>
+                            <TextBlock Text="Start minimized to tray"/>
+                        </StackPanel>
+                        <ToggleButton Style="{StaticResource Switch}" HorizontalAlignment="Right" VerticalAlignment="Center" IsChecked="{Binding StartMinimized}"/>
+                    </Grid>
+                    <Grid>
+                        <StackPanel>
+                            <TextBlock Text="Close button hides to tray"/>
+                            <TextBlock Style="{StaticResource Sub}" Text="Audio keeps flowing in the background; exit from the tray icon."/>
+                        </StackPanel>
+                        <ToggleButton Style="{StaticResource Switch}" HorizontalAlignment="Right" VerticalAlignment="Center" IsChecked="{Binding MinimizeToTray}"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <!-- VB-Cable -->
+            <Border Style="{StaticResource Card}" Margin="0,0,0,12">
+                <StackPanel>
+                    <TextBlock Text="VB-Cable (virtual mic driver)" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                    <TextBlock Style="{StaticResource Sub}" Text="Installed and ready. The Virtual Mic page uses it."
+                               Visibility="{Binding CableInstalled, Converter={StaticResource BoolToVis}}"/>
+                    <StackPanel Visibility="{Binding CableInstalled, Converter={StaticResource InvBoolToVis}}">
+                        <TextBlock Style="{StaticResource Sub}" Margin="0,0,0,10"
+                                   Text="Not installed. Download it (free), run the installer as administrator, reboot, and the Virtual Mic feature unlocks."/>
+                        <Button Style="{StaticResource PrimaryButton}" Content="Download VB-Cable" HorizontalAlignment="Left" Command="{Binding InstallCableCommand}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Dolby note -->
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="About Dolby / spatial sound" FontWeight="SemiBold" Margin="0,0,0,6"/>
+                    <TextBlock Style="{StaticResource Sub}"
+                               Text="Dolby Atmos (and any other enhancement) is applied by Windows on each output device itself. Routes that end at your Dolby-enabled headphones keep full Dolby processing automatically — nothing to configure here. Note: the raw feed sent to the Virtual Mic intentionally bypasses output effects; your friends hear the clean signal."/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
