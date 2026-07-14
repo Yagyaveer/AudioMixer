@@ -1,0 +1,20 @@
+# Build outputs
+bin/
+obj/
+publish/
+out/
+
+# Bundled third-party tools (fetched by scripts/fetch-tools.ps1)
+third_party/
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.user
+*.suo
+
+# Local settings / logs
+*.log
+
+# Local shortcut (points to a machine-specific build path)
+*.lnk
